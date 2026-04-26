@@ -18,7 +18,12 @@ chmod +x wgayu
 sudo cp wgayu /usr/local/bin/
 wgayu init
 ```
+## Prerequisites
+`wgayu` is designed for Linux systems (Ubuntu/Debian recommended). Ensure the following dependencies are installed:
 
+```bash
+sudo apt update && sudo apt install -y wireguard qrencode curl iptables
+```
 ## Quick Start
 1. **Initialize:** `wgayu init`
 2. **Add device:** `wgayu add my_iphone`
