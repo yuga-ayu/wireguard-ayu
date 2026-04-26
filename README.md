@@ -8,14 +8,12 @@ You must run these commands on your WireGuard server (requires root/sudo privile
 **Option 1: Quick Install (Recommended)**
 The fastest way to install the CLI directly into your system binaries:
 ```bash
-curl -sL [https://raw.githubusercontent.com/yuga-ayu/wgut/main/install.sh](https://raw.githubusercontent.com/yuga-ayu/wgut/main/install.sh) | bash
+curl -sL [https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/refs/heads/main/install.sh](https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/refs/heads/main/install.sh) | bash
 ```
-
 **Option 2: Manual Git Clone**
 For users who prefer to inspect the source code before installing:
 ```bash
-git clone [https://github.com/yuga-ayu/wgut.git](https://github.com/yuga-ayu/wgut.git)
-cd wgut
+git clone [https://github.com/yuga-ayu/wireguard-ayu.git](https://github.com/yuga-ayu/wireguard-ayu.git)
 chmod +x wgut
 sudo cp wgut /usr/local/bin/
 wgut init
