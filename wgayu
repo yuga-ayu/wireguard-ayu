@@ -31,14 +31,14 @@ add_peer() {
     CLIENT_PRIV=$(wg genkey)
     CLIENT_PUB=$(echo "$CLIENT_PRIV" | wg pubkey)
 
-    cat <<INNER_EOF > "$PEERS_DIR/${CLIENT_NAME}_peer.conf"
+    cat <<EOF > "$PEERS_DIR/${CLIENT_NAME}_peer.conf"
 [Peer]
 # $CLIENT_NAME
 PublicKey = $CLIENT_PUB
 AllowedIPs = $CLIENT_IP
-INNER_EOF
+EOF
 
-    cat <<INNER_EOF > "$CLIENTS_DIR/${CLIENT_NAME}_full.conf"
+    cat <<EOF > "$CLIENTS_DIR/${CLIENT_NAME}_full.conf"
 [Interface]
 PrivateKey = $CLIENT_PRIV
 Address = $CLIENT_IP
@@ -49,9 +49,9 @@ PublicKey = $SERVER_PUB
 Endpoint = $ENDPOINT
 AllowedIPs = 0.0.0.0/0, ::/0
 PersistentKeepalive = 25
-INNER_EOF
+EOF
 
-    cat <<INNER_EOF > "$CLIENTS_DIR/${CLIENT_NAME}_split.conf"
+    cat <<EOF > "$CLIENTS_DIR/${CLIENT_NAME}_split.conf"
 [Interface]
 PrivateKey = $CLIENT_PRIV
 Address = $CLIENT_IP
@@ -62,7 +62,7 @@ PublicKey = $SERVER_PUB
 Endpoint = $ENDPOINT
 AllowedIPs = 10.0.0.0/24, 10.100.0.0/24
 PersistentKeepalive = 25
-INNER_EOF
+EOF
 
     rebuild
     echo "✅ Peer '$CLIENT_NAME' created! Run 'wgayu show $CLIENT_NAME' for QR."
