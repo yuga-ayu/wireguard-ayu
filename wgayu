@@ -80,8 +80,16 @@ show_qr() {
 
 update_cli() {
     echo "🔄 Pulling the latest version of wgayu from GitHub..."
-    curl -sL https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/main/wgayu -o /usr/local/bin/wgayu
-    chmod +x /usr/local/bin/wgayu
+    
+    # 1. Download to a temporary file so we don't break the running script
+    curl -sL https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/main/wgayu -o /tmp/wgayu_tmp
+    
+    # 2. Make it executable
+    chmod +x /tmp/wgayu_tmp
+    
+    # 3. Swap it in (this safely replaces the file inode instantly)
+    mv /tmp/wgayu_tmp /usr/local/bin/wgayu
+    
     echo "✅ Update complete!"
 }
 
