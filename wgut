@@ -78,6 +78,13 @@ show_qr() {
     qrencode -t ansiutf8 < "$CLIENTS_DIR/${1}_full.conf"
 }
 
+update_cli() {
+    echo "🔄 Pulling the latest version of wgut from GitHub..."
+    curl -sL https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/main/wgut -o /usr/local/bin/wgut
+    chmod +x /usr/local/bin/wgut
+    echo "✅ Update complete!"
+}
+
 init_env() {
     mkdir -p "$PEERS_DIR" "$CLIENTS_DIR"
     if [ ! -f "$BASE_CONF" ]; then cp "$WG_CONF" "$BASE_CONF"; fi
@@ -90,5 +97,6 @@ case "$1" in
     rebuild) rebuild ;;
     show) show_qr "$2" ;;
     init) init_env ;;
+    update) update_cli ;;
     *) echo "Usage: wgut [init|add|remove|show|rebuild]" ;;
 esac
