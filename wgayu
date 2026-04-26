@@ -65,7 +65,9 @@ PersistentKeepalive = 25
 EOF
 
     rebuild
-    echo "✅ Peer '$CLIENT_NAME' created! Run 'wgayu show $CLIENT_NAME' for QR."
+    echo "✅ Peer '$CLIENT_NAME' created successfully!"
+    echo ""
+    show_qr "$CLIENT_NAME"
 }
 
 remove_peer() {
@@ -74,10 +76,19 @@ remove_peer() {
 }
 
 show_qr() {
-    echo "📱 FULL TUNNEL QR CODE:"
+    if [ ! -f "$CLIENTS_DIR/${1}_full.conf" ]; then
+        echo "❌ Error: Client '$1' not found."
+        return 1
+    fi
+    
+    echo "📱 FULL TUNNEL QR CODE (Routes ALL traffic through VPN):"
     qrencode -t ansiutf8 < "$CLIENTS_DIR/${1}_full.conf"
+    
     echo ""
-    echo "📱 SPLIT TUNNEL QR CODE:"
+    read -p "➡️  Press [Enter] to show the SPLIT TUNNEL QR code..."
+    echo ""
+    
+    echo "📱 SPLIT TUNNEL QR CODE (Routes ONLY Home Network through VPN):"
     qrencode -t ansiutf8 < "$CLIENTS_DIR/${1}_split.conf"
 }
 
