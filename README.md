@@ -1,4 +1,4 @@
-# WireGuard Ayu (`wgut`) 🚀
+# WireGuard Ayu (`wgayu`) 🚀
 A lightning-fast, zero-dependency CLI for managing professional-grade WireGuard VPN servers. Built by [Yugayu](https://github.com/yuga-ayu).
 
 ## Installation
@@ -14,15 +14,15 @@ curl -sL [https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/refs/heads/ma
 For users who prefer to inspect the source code before installing:
 ```bash
 git clone [https://github.com/yuga-ayu/wireguard-ayu.git](https://github.com/yuga-ayu/wireguard-ayu.git)
-chmod +x wgut
-sudo cp wgut /usr/local/bin/
-wgut init
+chmod +x wgayu
+sudo cp wgayu /usr/local/bin/
+wgayu init
 ```
 
 ## Quick Start
-1. **Initialize:** `wgut init`
-2. **Add device:** `wgut add my_iphone`
-3. **Show QR:** `wgut show my_iphone`
+1. **Initialize:** `wgayu init`
+2. **Add device:** `wgayu add my_iphone`
+3. **Show QR:** `wgayu show my_iphone`
 
 ## License
 MIT License - Copyright (c) 2026 Yugayu

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================
-# wgut - WireGuard Ayu Management CLI
+# wgayu - WireGuard Ayu Management CLI
 # ==========================================
 
 WG_DIR="/etc/wireguard"
@@ -65,7 +65,7 @@ PersistentKeepalive = 25
 INNER_EOF
 
     rebuild
-    echo "✅ Peer '$CLIENT_NAME' created! Run 'wgut show $CLIENT_NAME' for QR."
+    echo "✅ Peer '$CLIENT_NAME' created! Run 'wgayu show $CLIENT_NAME' for QR."
 }
 
 remove_peer() {
@@ -79,9 +79,9 @@ show_qr() {
 }
 
 update_cli() {
-    echo "🔄 Pulling the latest version of wgut from GitHub..."
-    curl -sL https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/main/wgut -o /usr/local/bin/wgut
-    chmod +x /usr/local/bin/wgut
+    echo "🔄 Pulling the latest version of wgayu from GitHub..."
+    curl -sL https://raw.githubusercontent.com/yuga-ayu/wireguard-ayu/main/wgayu -o /usr/local/bin/wgayu
+    chmod +x /usr/local/bin/wgayu
     echo "✅ Update complete!"
 }
 
@@ -98,5 +98,5 @@ case "$1" in
     show) show_qr "$2" ;;
     init) init_env ;;
     update) update_cli ;;
-    *) echo "Usage: wgut [init|add|remove|show|rebuild]" ;;
+    *) echo "Usage: wgayu [init|add|remove|show|rebuild]" ;;
 esac
