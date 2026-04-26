@@ -85,6 +85,22 @@ update_cli() {
     echo "✅ Update complete!"
 }
 
+list_peers() {
+    echo "📋 Current WireGuard Peers:"
+    echo "---------------------------"
+    # Check if the directory exists and has files
+    if [ ! -d "$PEERS_DIR" ] || [ -z "$(ls -A "$PEERS_DIR" 2>/dev/null)" ]; then
+        echo " No active peers found."
+    else
+        # Loop through the files, strip the extension, and grab the IP
+        ls -1 "$PEERS_DIR" | grep '_peer\.conf$' | sed 's/_peer\.conf//' | while read peer; do
+            IP=$(grep -oP 'AllowedIPs\s*=\s*\K.*' "$PEERS_DIR/${peer}_peer.conf" 2>/dev/null)
+            echo " - $peer ($IP)"
+        done
+    fi
+    echo "---------------------------"
+}
+
 init_env() {
     mkdir -p "$PEERS_DIR" "$CLIENTS_DIR"
     if [ ! -f "$BASE_CONF" ]; then cp "$WG_CONF" "$BASE_CONF"; fi
@@ -98,5 +114,6 @@ case "$1" in
     show) show_qr "$2" ;;
     init) init_env ;;
     update) update_cli ;;
-    *) echo "Usage: wgayu [init|add|remove|show|rebuild]" ;;
+    list) list_peers ;;
+    *) echo "Usage: wgayu [init|add|remove|list|show|rebuild|update]" ;;
 esac
