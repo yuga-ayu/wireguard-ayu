@@ -76,6 +76,9 @@ remove_peer() {
 show_qr() {
     echo "📱 FULL TUNNEL QR CODE:"
     qrencode -t ansiutf8 < "$CLIENTS_DIR/${1}_full.conf"
+    echo ""
+    echo "📱 SPLIT TUNNEL QR CODE:"
+    qrencode -t ansiutf8 < "$CLIENTS_DIR/${1}_split.conf"
 }
 
 update_cli() {
