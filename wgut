@@ -1,0 +1,94 @@
+#!/bin/bash
+# ==========================================
+# wgut - WireGuard Ayu Management CLI
+# ==========================================
+
+WG_DIR="/etc/wireguard"
+WG_CONF="$WG_DIR/wg0.conf"
+BASE_CONF="$WG_DIR/wg0.conf.base"
+PEERS_DIR="$WG_DIR/peers.d"
+CLIENTS_DIR="$WG_DIR/clients"
+ENDPOINT="vpn.yugayu.com:51820"
+DNS_SERVER="10.0.0.61"
+
+rebuild() {
+    echo "⚙️  Rebuilding WireGuard configuration..."
+    cat "$BASE_CONF" "$PEERS_DIR"/*.conf > "$WG_CONF" 2>/dev/null || cat "$BASE_CONF" > "$WG_CONF"
+    chmod 600 "$WG_CONF"
+    systemctl restart wg-quick@wg0
+    echo "✅ Server rebuilt and restarted successfully."
+}
+
+add_peer() {
+    if [ -z "$1" ]; then echo "❌ Error: Missing peer name."; exit 1; fi
+    CLIENT_NAME=$1
+    SERVER_PUB=$(wg show wg0 public-key)
+    LAST_IP=$(grep -oP 'AllowedIPs\s*=\s*10\.100\.0\.\K\d+' "$WG_DIR"/peers.d/*.conf 2>/dev/null | sort -n | tail -1)
+    if [ -z "$LAST_IP" ]; then NEXT_IP=2; else NEXT_IP=$((LAST_IP + 1)); fi
+    CLIENT_IP="10.100.0.${NEXT_IP}/32"
+
+    echo "🔑 Generating keys for $CLIENT_NAME ($CLIENT_IP)..."
+    CLIENT_PRIV=$(wg genkey)
+    CLIENT_PUB=$(echo "$CLIENT_PRIV" | wg pubkey)
+
+    cat <<INNER_EOF > "$PEERS_DIR/${CLIENT_NAME}_peer.conf"
+[Peer]
+# $CLIENT_NAME
+PublicKey = $CLIENT_PUB
+AllowedIPs = $CLIENT_IP
+INNER_EOF
+
+    cat <<INNER_EOF > "$CLIENTS_DIR/${CLIENT_NAME}_full.conf"
+[Interface]
+PrivateKey = $CLIENT_PRIV
+Address = $CLIENT_IP
+DNS = $DNS_SERVER
+
+[Peer]
+PublicKey = $SERVER_PUB
+Endpoint = $ENDPOINT
+AllowedIPs = 0.0.0.0/0, ::/0
+PersistentKeepalive = 25
+INNER_EOF
+
+    cat <<INNER_EOF > "$CLIENTS_DIR/${CLIENT_NAME}_split.conf"
+[Interface]
+PrivateKey = $CLIENT_PRIV
+Address = $CLIENT_IP
+DNS = $DNS_SERVER
+
+[Peer]
+PublicKey = $SERVER_PUB
+Endpoint = $ENDPOINT
+AllowedIPs = 10.0.0.0/24, 10.100.0.0/24
+PersistentKeepalive = 25
+INNER_EOF
+
+    rebuild
+    echo "✅ Peer '$CLIENT_NAME' created! Run 'wgut show $CLIENT_NAME' for QR."
+}
+
+remove_peer() {
+    rm -f "$PEERS_DIR/${1}_peer.conf" "$CLIENTS_DIR/${1}_"*
+    rebuild
+}
+
+show_qr() {
+    echo "📱 FULL TUNNEL QR CODE:"
+    qrencode -t ansiutf8 < "$CLIENTS_DIR/${1}_full.conf"
+}
+
+init_env() {
+    mkdir -p "$PEERS_DIR" "$CLIENTS_DIR"
+    if [ ! -f "$BASE_CONF" ]; then cp "$WG_CONF" "$BASE_CONF"; fi
+    echo "✅ Setup complete."
+}
+
+case "$1" in
+    add) add_peer "$2" ;;
+    remove) remove_peer "$2" ;;
+    rebuild) rebuild ;;
+    show) show_qr "$2" ;;
+    init) init_env ;;
+    *) echo "Usage: wgut [init|add|remove|show|rebuild]" ;;
+esac
